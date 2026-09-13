@@ -1,0 +1,1 @@
+import Link from "next/link";export default function NotFound(){return <main className="grid min-h-screen place-items-center text-center"><div><p className="label text-violet">Erreur 404</p><h1 className="text-4xl font-semibold">Profil introuvable.</h1><Link href="/" className="btn-primary mt-6">Retour à l’accueil</Link></div></main>}

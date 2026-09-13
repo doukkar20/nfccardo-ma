@@ -1,0 +1,7 @@
+generator client { provider = "prisma-client-js" }
+datasource db { provider = "postgresql"; url = env("DATABASE_URL") }
+enum SubscriptionStatus { active expired pending }
+enum OrderStatus { pending_verification approved rejected }
+model User { id String @id @default(cuid()); name String; email String @unique; subscriptionStatus SubscriptionStatus @default(pending); slug String @unique; profile CardProfile?; orders Order[]; createdAt DateTime @default(now()); updatedAt DateTime @updatedAt }
+model CardProfile { id String @id @default(cuid()); clientId String @unique; client User @relation(fields:[clientId],references:[id],onDelete:Cascade); title String; company String; phone String; whatsapp String; email String; website String; linkedin String; instagram String; googleMaps String; logoUrl String; photoUrl String? }
+model Order { id String @id @default(cuid()); clientId String; client User @relation(fields:[clientId],references:[id]); status OrderStatus @default(pending_verification); receiptUrl String; createdAt DateTime @default(now()) }

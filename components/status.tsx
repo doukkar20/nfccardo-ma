@@ -1,0 +1,1 @@
+import type {SubscriptionStatus} from "@/lib/data";export function Status({value}:{value:SubscriptionStatus}){const c=value==="active"?"bg-emerald-400/10 text-emerald-300":value==="expired"?"bg-rose-400/10 text-rose-300":"bg-amber-400/10 text-amber-300";return <span className={`inline-flex rounded-full px-3 py-1 text-xs font-medium capitalize ${c}`}>{value}</span>}

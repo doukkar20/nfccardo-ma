@@ -1,0 +1,2 @@
+import Link from "next/link";import Image from "next/image";
+export function Logo(){return <Link href="/" aria-label="NFCcardo.ma — Accueil" className="group flex items-center gap-2.5 font-semibold tracking-[-.03em]"><span className="relative h-11 w-11 transition duration-300 group-hover:scale-110 group-hover:-rotate-3"><Image src="/nfccardo-3d-logo.png" alt="" fill priority className="object-contain drop-shadow-[0_8px_18px_rgba(124,92,255,.35)]" sizes="44px"/></span><span className="text-[17px]">NFCcardo<span className="text-violet">.ma</span></span></Link>}

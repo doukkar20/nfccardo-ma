@@ -1,0 +1,1 @@
+import {Logo} from "./logo";export function Footer(){return <footer className="border-t border-white/10 py-10"><div className="shell flex flex-col gap-5 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between"><Logo/><p>Conçu au Maroc, pour les connexions qui comptent.</p><p>© 2026 NFCcardo.ma</p></div></footer>}
