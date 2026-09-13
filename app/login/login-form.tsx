@@ -1,3 +1,204 @@
 "use client";
-import {FormEvent,useState} from "react";import {useRouter} from "next/navigation";import Link from "next/link";import {ArrowRight,Eye,EyeOff,ShieldCheck,UserRound} from "lucide-react";import {getSupabaseBrowser} from "@/lib/supabase";
-export function LoginForm(){const router=useRouter();const[mode,setMode]=useState<"login"|"signup">("login");const[show,setShow]=useState(false);const[error,setError]=useState("");const[message,setMessage]=useState("");const[loading,setLoading]=useState(false);async function submit(e:FormEvent<HTMLFormElement>){e.preventDefault();setLoading(true);setError("");setMessage("");const f=new FormData(e.currentTarget),email=String(f.get("email")||"").trim(),password=String(f.get("password")||"");const supabase=getSupabaseBrowser();try{if(mode==="signup"){const{data,error}=await supabase.auth.signUp({email,password,options:{data:{name:String(f.get("name")||"")},emailRedirectTo:`${location.origin}/login`}});if(error){const limited=error.code==="over_email_send_rate_limit"||error.message.toLowerCase().includes("rate limit");setError(limited?"Trop d’e-mails de confirmation ont été demandés. Attendez une heure, puis réessayez une seule fois. Si votre compte existe déjà, utilisez Connexion.":error.message);return}if(data.session)router.push(`/dashboard/${data.user?.id}`);else setMessage("Compte créé. Vérifiez votre e-mail pour confirmer votre inscription.");return}const{data,error}=await supabase.auth.signInWithPassword({email,password});if(error){setError("Identifiants incorrects ou compte non confirmé.");return}router.push(`/dashboard/${data.user.id}`);router.refresh()}catch{setError("Connexion impossible pour le moment. Réessayez dans quelques instants.")}finally{setLoading(false)}}return <div className="mx-auto mt-10 grid max-w-4xl overflow-hidden rounded-[32px] border border-white/10 bg-white/[.035] shadow-2xl md:grid-cols-[.9fr_1.1fr]"><aside className="relative hidden overflow-hidden bg-gradient-to-br from-violet/30 via-indigo-950 to-[#111318] p-9 md:block"><div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-violet/20 blur-[70px]"/><div className="relative flex h-full flex-col justify-between"><span className="grid h-12 w-12 place-items-center rounded-2xl border border-white/10 bg-white/10"><UserRound/></span><div><h2 className="text-3xl font-semibold tracking-tight">Votre réseau,<br/>toujours à portée.</h2><p className="mt-4 text-sm leading-6 text-slate-400">Un espace sécurisé connecté à votre profil NFCcardo.</p></div><p className="text-xs text-slate-500">NFCcardo.ma · Client Portal</p></div></aside><form onSubmit={submit} className="p-7 sm:p-10"><div className="flex rounded-full bg-black/30 p-1"><button type="button" onClick={()=>setMode("login")} className={`flex-1 rounded-full py-2 text-xs ${mode==="login"?"bg-white text-black":"text-slate-400"}`}>Connexion</button><button type="button" onClick={()=>setMode("signup")} className={`flex-1 rounded-full py-2 text-xs ${mode==="signup"?"bg-white text-black":"text-slate-400"}`}>Créer un compte</button></div><h2 className="mt-7 text-xl font-semibold">{mode==="login"?"Connexion client":"Rejoindre NFCcardo"}</h2>{mode==="signup"&&<label className="mt-6 block"><span className="label">Nom complet</span><input name="name" className="input" required/></label>}<label className={mode==="signup"?"mt-5 block":"mt-7 block"}><span className="label">E-mail</span><input name="email" type="email" autoComplete="email" className="input" required/></label><label className="mt-5 block"><span className="label">Mot de passe</span><span className="relative block"><input name="password" type={show?"text":"password"} minLength={8} autoComplete={mode==="login"?"current-password":"new-password"} className="input !pr-12" required/><button type="button" aria-label="Afficher le mot de passe" onClick={()=>setShow(v=>!v)} className="absolute right-4 top-4 text-slate-500">{show?<EyeOff size={17}/>:<Eye size={17}/>}</button></span></label>{error&&<p role="alert" className="mt-4 rounded-xl bg-rose-400/10 p-3 text-sm text-rose-300">{error}</p>}{message&&<p className="mt-4 rounded-xl bg-emerald-400/10 p-3 text-sm text-emerald-300">{message}</p>}<button disabled={loading} className="btn-primary mt-7 w-full">{loading?"Veuillez patienter…":mode==="login"?"Se connecter":"Créer mon compte"}<ArrowRight size={16}/></button><p className="mt-5 text-center text-xs text-slate-600">Pas encore de carte ? <Link href="/order" className="text-violet">Commander maintenant</Link></p><p className="mt-7 flex items-center justify-center gap-2 border-t border-white/10 pt-5 text-[11px] text-slate-600"><ShieldCheck size={13}/> Authentification sécurisée par Supabase</p></form></div>}
+import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { ArrowRight, Eye, EyeOff, ShieldCheck, UserRound } from "lucide-react";
+import { getSupabaseBrowser } from "@/lib/supabase";
+const AUTH_TIMEOUT_MS = 10000;
+function withTimeout<T>(request: PromiseLike<T>): Promise<T> {
+  return Promise.race([
+    Promise.resolve(request),
+    new Promise<T>((_, reject) =>
+      window.setTimeout(
+        () => reject(new Error("AUTH_TIMEOUT")),
+        AUTH_TIMEOUT_MS,
+      ),
+    ),
+  ]);
+}
+export function LoginForm() {
+  const router = useRouter();
+  const [mode, setMode] = useState<"login" | "signup">("login");
+  const [show, setShow] = useState(false);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  async function submit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    setMessage("");
+    const f = new FormData(e.currentTarget),
+      email = String(f.get("email") || "").trim(),
+      password = String(f.get("password") || "");
+    const supabase = getSupabaseBrowser();
+    try {
+      if (mode === "signup") {
+        const { data, error } = await withTimeout(
+          supabase.auth.signUp({
+            email,
+            password,
+            options: {
+              data: { name: String(f.get("name") || "") },
+              emailRedirectTo: `${location.origin}/login`,
+            },
+          }),
+        );
+        if (error) {
+          const limited =
+            error.code === "over_email_send_rate_limit" ||
+            error.message.toLowerCase().includes("rate limit");
+          setError(
+            limited
+              ? "Trop d’e-mails de confirmation ont été demandés. Attendez une heure, puis réessayez une seule fois. Si votre compte existe déjà, utilisez Connexion."
+              : error.message,
+          );
+          return;
+        }
+        if (data.session) router.push(`/dashboard/${data.user?.id}`);
+        else
+          setMessage(
+            "Compte créé. Vérifiez votre e-mail pour confirmer votre inscription.",
+          );
+        return;
+      }
+      const { data, error } = await withTimeout(
+        supabase.auth.signInWithPassword({
+          email,
+          password,
+        }),
+      );
+      if (error) {
+        setError("Identifiants incorrects ou compte non confirmé.");
+        return;
+      }
+      router.push(`/dashboard/${data.user.id}`);
+      router.refresh();
+    } catch (authError) {
+      if (authError instanceof Error && authError.message === "AUTH_TIMEOUT") {
+        setError(
+          "Le serveur met trop de temps à répondre. Vérifiez votre connexion puis réessayez.",
+        );
+        return;
+      }
+      setError(
+        "Connexion impossible pour le moment. Réessayez dans quelques instants.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+  return (
+    <div className="mx-auto mt-10 grid max-w-4xl overflow-hidden rounded-[32px] border border-white/10 bg-white/[.035] shadow-2xl md:grid-cols-[.9fr_1.1fr]">
+      <aside className="relative hidden overflow-hidden bg-gradient-to-br from-violet/30 via-indigo-950 to-[#111318] p-9 md:block">
+        <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-violet/20 blur-[70px]" />
+        <div className="relative flex h-full flex-col justify-between">
+          <span className="grid h-12 w-12 place-items-center rounded-2xl border border-white/10 bg-white/10">
+            <UserRound />
+          </span>
+          <div>
+            <h2 className="text-3xl font-semibold tracking-tight">
+              Votre réseau,
+              <br />
+              toujours à portée.
+            </h2>
+            <p className="mt-4 text-sm leading-6 text-slate-400">
+              Un espace sécurisé connecté à votre profil NFCcardo.
+            </p>
+          </div>
+          <p className="text-xs text-slate-500">NFCcardo.ma · Client Portal</p>
+        </div>
+      </aside>
+      <form onSubmit={submit} className="p-7 sm:p-10">
+        <div className="flex rounded-full bg-black/30 p-1">
+          <button
+            type="button"
+            onClick={() => setMode("login")}
+            className={`flex-1 rounded-full py-2 text-xs ${mode === "login" ? "bg-white text-black" : "text-slate-400"}`}
+          >
+            Connexion
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode("signup")}
+            className={`flex-1 rounded-full py-2 text-xs ${mode === "signup" ? "bg-white text-black" : "text-slate-400"}`}
+          >
+            Créer un compte
+          </button>
+        </div>
+        <h2 className="mt-7 text-xl font-semibold">
+          {mode === "login" ? "Connexion client" : "Rejoindre NFCcardo"}
+        </h2>
+        {mode === "signup" && (
+          <label className="mt-6 block">
+            <span className="label">Nom complet</span>
+            <input name="name" className="input" required />
+          </label>
+        )}
+        <label className={mode === "signup" ? "mt-5 block" : "mt-7 block"}>
+          <span className="label">E-mail</span>
+          <input
+            name="email"
+            type="email"
+            autoComplete="email"
+            className="input"
+            required
+          />
+        </label>
+        <label className="mt-5 block">
+          <span className="label">Mot de passe</span>
+          <span className="relative block">
+            <input
+              name="password"
+              type={show ? "text" : "password"}
+              minLength={8}
+              autoComplete={
+                mode === "login" ? "current-password" : "new-password"
+              }
+              className="input !pr-12"
+              required
+            />
+            <button
+              type="button"
+              aria-label="Afficher le mot de passe"
+              onClick={() => setShow((v) => !v)}
+              className="absolute right-4 top-4 text-slate-500"
+            >
+              {show ? <EyeOff size={17} /> : <Eye size={17} />}
+            </button>
+          </span>
+        </label>
+        {error && (
+          <p
+            role="alert"
+            className="mt-4 rounded-xl bg-rose-400/10 p-3 text-sm text-rose-300"
+          >
+            {error}
+          </p>
+        )}
+        {message && (
+          <p className="mt-4 rounded-xl bg-emerald-400/10 p-3 text-sm text-emerald-300">
+            {message}
+          </p>
+        )}
+        <button disabled={loading} className="btn-primary mt-7 w-full">
+          {loading
+            ? "Veuillez patienter…"
+            : mode === "login"
+              ? "Se connecter"
+              : "Créer mon compte"}
+          <ArrowRight size={16} />
+        </button>
+        <p className="mt-5 text-center text-xs text-slate-600">
+          Pas encore de carte ?{" "}
+          <Link href="/order" className="text-violet">
+            Commander maintenant
+          </Link>
+        </p>
+        <p className="mt-7 flex items-center justify-center gap-2 border-t border-white/10 pt-5 text-[11px] text-slate-600">
+          <ShieldCheck size={13} /> Authentification sécurisée par Supabase
+        </p>
+      </form>
+    </div>
+  );
+}
