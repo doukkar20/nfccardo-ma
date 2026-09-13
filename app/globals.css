@@ -1,6 +1,257 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-:root{color-scheme:dark}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#08090c;color:#f8fafc}::selection{background:#7c5cff;color:white}
-@layer components{.shell{@apply mx-auto w-full max-w-7xl px-5 sm:px-8}.glass{@apply border border-white/10 bg-white/[.045] backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,.04)]}.btn-primary{@apply inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-black transition duration-300 hover:scale-[1.02] hover:bg-violet hover:text-white hover:shadow-[0_10px_35px_rgba(124,92,255,.3)] focus:outline-none focus:ring-2 focus:ring-violet focus:ring-offset-2 focus:ring-offset-ink}.btn-secondary{@apply inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold transition duration-300 hover:border-white/25 hover:bg-white/10}.label{@apply mb-2 block text-[11px] font-semibold uppercase tracking-[.16em] text-slate-400}.input{@apply w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3.5 text-sm text-white outline-none transition placeholder:text-slate-600 hover:border-white/20 focus:border-violet/70 focus:bg-violet/[.03] focus:ring-2 focus:ring-violet/20}.field-note{@apply mt-1.5 text-xs leading-5 text-slate-600}.panel{@apply rounded-[28px] border border-white/10 bg-gradient-to-b from-white/[.055] to-white/[.025]}}
-.grid-noise{background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:48px 48px}.text-gradient{background:linear-gradient(110deg,#fff 30%,#aaa1ff 70%,#fff);-webkit-background-clip:text;background-clip:text;color:transparent}.animate-float{animation:float 6s ease-in-out infinite}@keyframes float{50%{transform:translateY(-10px)}}
+:root {
+  color-scheme: dark;
+}
+* {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  background: #08090c;
+  color: #f8fafc;
+}
+::selection {
+  background: #7c5cff;
+  color: white;
+}
+@layer components {
+  .shell {
+    @apply mx-auto w-full max-w-7xl px-5 sm:px-8;
+  }
+  .glass {
+    @apply border border-white/10 bg-white/[.045] backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,.04)];
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-black transition duration-300 hover:scale-[1.02] hover:bg-violet hover:text-white hover:shadow-[0_10px_35px_rgba(124,92,255,.3)] focus:outline-none focus:ring-2 focus:ring-violet focus:ring-offset-2 focus:ring-offset-ink;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold transition duration-300 hover:border-white/25 hover:bg-white/10;
+  }
+  .label {
+    @apply mb-2 block text-[11px] font-semibold uppercase tracking-[.16em] text-slate-400;
+  }
+  .input {
+    @apply w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3.5 text-sm text-white outline-none transition placeholder:text-slate-600 hover:border-white/20 focus:border-violet/70 focus:bg-violet/[.03] focus:ring-2 focus:ring-violet/20;
+  }
+  .field-note {
+    @apply mt-1.5 text-xs leading-5 text-slate-600;
+  }
+  .panel {
+    @apply rounded-[28px] border border-white/10 bg-gradient-to-b from-white/[.055] to-white/[.025];
+  }
+}
+.grid-noise {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.text-gradient {
+  background: linear-gradient(110deg, #fff 30%, #aaa1ff 70%, #fff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+@keyframes float {
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* NFCcardo motion system */
+body {
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 50% -20%, #17112d 0, transparent 38%), #08090c;
+}
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  border-radius: 999px;
+  filter: blur(100px);
+  opacity: 0.15;
+  pointer-events: none;
+  animation: ambient-orbit 18s ease-in-out infinite alternate;
+}
+body::before {
+  width: 34rem;
+  height: 34rem;
+  left: -16rem;
+  top: 12%;
+  background: #7c5cff;
+}
+body::after {
+  width: 28rem;
+  height: 28rem;
+  right: -13rem;
+  bottom: 2%;
+  background: #334cff;
+  animation-delay: -9s;
+  animation-direction: alternate-reverse;
+}
+main {
+  animation: page-enter 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+header {
+  animation: header-drop 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.glass,
+.panel {
+  position: relative;
+  isolation: isolate;
+  transition:
+    transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 0.4s,
+    box-shadow 0.4s,
+    background-color 0.4s;
+}
+.glass::before,
+.panel::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0.09),
+    transparent 28%,
+    transparent 70%,
+    rgba(124, 92, 255, 0.07)
+  );
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.glass:hover::before,
+.panel:hover::before {
+  opacity: 1;
+}
+.glass:hover,
+.panel:hover {
+  border-color: rgba(154, 132, 255, 0.28);
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(124, 92, 255, 0.04);
+}
+.btn-primary,
+.btn-secondary {
+  position: relative;
+  overflow: hidden;
+  will-change: transform;
+}
+.btn-primary::after,
+.btn-secondary::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  transform: translateX(-140%) skewX(-22deg);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  transition: transform 0.65s ease;
+}
+.btn-primary:hover::after,
+.btn-secondary:hover::after {
+  transform: translateX(140%) skewX(-22deg);
+}
+.btn-primary:active,
+.btn-secondary:active {
+  transform: scale(0.97);
+}
+.input:focus {
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 0 3px rgba(124, 92, 255, 0.12),
+    0 12px 30px rgba(0, 0, 0, 0.2);
+}
+.text-gradient {
+  background-size: 220% auto;
+  animation: gradient-flow 6s linear infinite;
+}
+.animate-float {
+  animation:
+    float 6s ease-in-out infinite,
+    soft-glow 4s ease-in-out infinite alternate;
+}
+section > .shell {
+  animation: reveal-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-timeline: view();
+  animation-range: entry 5% cover 25%;
+}
+article.glass:hover svg,
+.panel:hover svg {
+  animation: icon-bounce 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes header-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes ambient-orbit {
+  to {
+    transform: translate3d(8vw, -5vh, 0) scale(1.15);
+  }
+}
+@keyframes gradient-flow {
+  to {
+    background-position: 220% center;
+  }
+}
+@keyframes soft-glow {
+  to {
+    filter: drop-shadow(0 30px 45px rgba(124, 92, 255, 0.22));
+  }
+}
+@keyframes icon-bounce {
+  50% {
+    transform: translateY(-4px) scale(1.08);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
