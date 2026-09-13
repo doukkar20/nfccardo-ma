@@ -64,6 +64,75 @@ const copy: Record<string, { en: string; ar: string }> = {
   Coordonnées: { en: "Contact details", ar: "بيانات الاتصال" },
   "Commander maintenant": { en: "Order now", ar: "اطلب الآن" },
 };
+Object.assign(copy, {
+  "Espace NFCcardo": { en: "NFCcardo space", ar: "فضاء NFCcardo" },
+  "Vous êtes administrateur ?": {
+    en: "Are you an administrator?",
+    ar: "هل أنت مسؤول؟",
+  },
+  "Connexion admin": { en: "Admin sign in", ar: "دخول المسؤول" },
+  "Aperçu en direct": { en: "Live preview", ar: "معاينة مباشرة" },
+  "Votre nom": { en: "Your name", ar: "اسمك" },
+  "Votre titre": { en: "Your title", ar: "منصبك" },
+  "Votre identité, parfaitement présentée.": {
+    en: "Your identity, perfectly presented.",
+    ar: "هويتك مقدمة بأفضل صورة.",
+  },
+  "Donnez du caractère à votre carte.": {
+    en: "Give your card character.",
+    ar: "امنح بطاقتك طابعاً مميزاً.",
+  },
+  "Tout est prêt pour impression.": {
+    en: "Everything is ready for print.",
+    ar: "كل شيء جاهز للطباعة.",
+  },
+  "Informations professionnelles": {
+    en: "Professional information",
+    ar: "المعلومات المهنية",
+  },
+  "Style de la carte": { en: "Card style", ar: "تصميم البطاقة" },
+  "Choisissez votre finition préférée.": {
+    en: "Choose your preferred finish.",
+    ar: "اختر اللمسة النهائية المفضلة.",
+  },
+  "Photo de profil": { en: "Profile photo", ar: "الصورة الشخصية" },
+  "Logo d’entreprise": { en: "Company logo", ar: "شعار الشركة" },
+  "Cliquez pour remplacer": { en: "Click to replace", ar: "انقر للاستبدال" },
+  "Profil complet et prêt": {
+    en: "Profile complete and ready",
+    ar: "الملف مكتمل وجاهز",
+  },
+  Nom: { en: "Name", ar: "الاسم" },
+  Fonction: { en: "Title", ar: "المنصب" },
+  Entreprise: { en: "Company", ar: "الشركة" },
+  Téléphone: { en: "Phone", ar: "الهاتف" },
+  Finition: { en: "Finish", ar: "اللمسة النهائية" },
+  Précédent: { en: "Previous", ar: "السابق" },
+  Continuer: { en: "Continue", ar: "متابعة" },
+  "Passer au paiement": { en: "Proceed to payment", ar: "الانتقال إلى الدفع" },
+  "Virement bancaire": { en: "Bank transfer", ar: "تحويل بنكي" },
+  "Importer le reçu": { en: "Upload receipt", ar: "تحميل الإيصال" },
+  "Carte personnalisée": { en: "Custom card", ar: "بطاقة مخصصة" },
+  Total: { en: "Total", ar: "المجموع" },
+  "Espace client connecté": { en: "Connected client area", ar: "فضاء العميل" },
+  "Ma carte digitale": { en: "My digital card", ar: "بطاقتي الرقمية" },
+  Abonnement: { en: "Subscription", ar: "الاشتراك" },
+  "Profil complété": { en: "Profile completed", ar: "اكتمال الملف" },
+  "Tous les statuts": { en: "All statuses", ar: "جميع الحالات" },
+  "Fermer ×": { en: "Close ×", ar: "إغلاق ×" },
+  "Erreur 404": { en: "Error 404", ar: "خطأ 404" },
+  "Profil introuvable.": { en: "Profile not found.", ar: "الملف غير موجود." },
+  "Retour à l’accueil": { en: "Back to home", ar: "العودة إلى الرئيسية" },
+  "Accès contrôlé par rôle": {
+    en: "Role-controlled access",
+    ar: "وصول محمي حسب الصلاحية",
+  },
+  "La carte signature": { en: "The signature card", ar: "البطاقة المميزة" },
+  "L’expérience digitale": {
+    en: "The digital experience",
+    ar: "التجربة الرقمية",
+  },
+});
 const originals = new WeakMap<Text, string>();
 export function LanguageSwitcher() {
   const [lang, setLang] = useState<Lang>("fr");
