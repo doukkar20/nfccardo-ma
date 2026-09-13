@@ -1,5 +1,9 @@
 # NFCcardo.ma — NFC Business Card SaaS
 
+## 🌐 Live website
+
+**[Open NFCcardo.ma](https://nfccardo-ma.vercel.app)**
+
 Premium NFC business card MVP for the Moroccan market, built with Next.js App Router, TypeScript and Tailwind CSS.
 
 ## Local development
